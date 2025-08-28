@@ -59,7 +59,7 @@ h1 {
 
 /* Styly pro modální okno (formulář) */
 .modal {
-    display: none; /* Klíčová změna - skryje modální okno */
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -69,7 +69,6 @@ h1 {
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
-    /* Uvnitř CSS by se mělo použít display: flex; pouze, když ho chcete zobrazit. */
     justify-content: center;
     align-items: center;
 }

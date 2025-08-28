@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Definice proměnných pro kontakty
     const contactsList = document.getElementById('contacts-list');
     const API_URL_FETCH = 'http://localhost:8080/contact/findContacts';
     const API_URL_SAVE = 'http://localhost:8080/contact/saveNewContact';
 
-    // Definice proměnných pro modální okno a formulář
     const addContactBtn = document.getElementById('add-contact-btn');
     const modal = document.getElementById('add-contact-modal');
     const closeBtn = document.querySelector('.close-btn');
