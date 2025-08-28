@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seznam kontaktů</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Seznam kontaktů</h1>
+    <button id="add-contact-btn">Přidat kontakt</button>
+    <ul id="contacts-list">
+        <p>Načítání kontaktů...</p>
+    </ul>
+</div>
+
+<div id="add-contact-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Nový kontakt</h2>
+        <form id="add-contact-form">
+            <label for="name">Jméno:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phoneNumber">Telefon:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+            <button type="submit">Uložit</button>
+        </form>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
