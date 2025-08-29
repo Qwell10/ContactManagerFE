@@ -24,16 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            contacts.forEach(contact => {
-                const li = document.createElement('li');
-                li.className = 'contact-item';
-                li.innerHTML = `
-                    <h3>${contact.name}</h3>
-                    <p><strong>Email:</strong> ${contact.email}</p>
-                    <p><strong>Telefon:</strong> ${contact.phoneNumber}</p>
-                `;
-                contactsList.appendChild(li);
-            });
+         contacts.forEach(contact => {
+             const li = document.createElement('li');
+             li.className = 'contact-item';
+             li.innerHTML = `
+                 <h3>${contact.name}</h3>
+                 <p><strong>Email:</strong> ${contact.email}</p>
+                 <p><strong>Telefon:</strong> ${contact.phoneNumber}</p>
+                 <button class="delete-btn">Smazat</button>
+             `;
+
+             // Najde nově vytvořené tlačítko a přidá mu posluchač
+             const deleteBtn = li.querySelector('.delete-btn');
+             deleteBtn.addEventListener('click', () => {
+                 if (confirm(`Opravdu chcete smazat kontakt ${contact.name}?`)) {
+                     // Zavoláme novou funkci deleteContact() s názvem kontaktu
+                     deleteContact(contact.name);
+                 }
+             });
+
+             contactsList.appendChild(li);
+         });
 
         } catch (error) {
             console.error('Došlo k chybě při načítání kontaktů:', error);
@@ -88,6 +99,28 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Nepodařilo se uložit kontakt. Zkontrolujte, zda je server spuštěn a správně nakonfigurován pro POST požadavky.');
         }
     });
+
+    function getDeleteUrl(contactName) {
+       return `http://localhost:8080/contact/deleteContact/${contactName}`;
+    }
+
+    // Funkce pro smazání kontaktu
+    async function deleteContact(contactName) {
+        try {
+            const response = await fetch(getDeleteUrl(contactName), {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error(`Chyba při mazání: ${response.status}`);
+            }
+            console.log(`Kontakt ${contactName} byl úspěšně smazán.`);
+            // Po úspěšném smazání znovu načteme seznam kontaktů
+            fetchContacts();
+        } catch (error) {
+            console.error('Došlo k chybě při mazání kontaktu:', error);
+            alert('Nepodařilo se smazat kontakt. Zkontrolujte, zda je server spuštěn a správně nakonfigurován pro DELETE požadavky.');
+        }
+    }
 
     // Spuštění načítání kontaktů při načtení stránky (tato část je klíčová pro zobrazení dat hned po načtení)
     fetchContacts();
