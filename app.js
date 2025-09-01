@@ -3,10 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_URL_FETCH = 'http://localhost:8080/contact/findContacts';
     const API_URL_SAVE = 'http://localhost:8080/contact/saveNewContact';
 
+    // Konstanty pro modální okno "Přidat kontakt"
     const addContactBtn = document.getElementById('add-contact-btn');
-    const modal = document.getElementById('add-contact-modal');
-    const closeBtn = document.querySelector('.close-btn');
+    const addContactModal = document.getElementById('add-contact-modal');
+    const addContactCloseBtn = addContactModal.querySelector('.close-btn');
     const addContactForm = document.getElementById('add-contact-form');
+
+    // Konstanty pro modální okno "Aktualizovat údaje"
+    const updateContactModal = document.getElementById('update-contact-modal');
+    const updateContactCloseBtn = updateContactModal.querySelector('.close-btn');
 
     // Funkce pro načtení kontaktů
     async function fetchContacts() {
@@ -24,27 +29,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-         contacts.forEach(contact => {
-             const li = document.createElement('li');
-             li.className = 'contact-item';
-             li.innerHTML = `
-                 <h3>${contact.name}</h3>
-                 <p><strong>Email:</strong> ${contact.email}</p>
-                 <p><strong>Telefon:</strong> ${contact.phoneNumber}</p>
-                 <button class="delete-btn">Smazat</button>
-             `;
+            contacts.forEach(contact => {
+                const li = document.createElement('li');
+                li.className = 'contact-item';
+                li.innerHTML = `
+                    <h3><span class="name">${contact.name}</span></h3>
+                    <p><strong>Email:</strong> <span class="email">${contact.email}</span></p>
+                    <p><strong>Telefon:</strong> <span class="phone">${contact.phoneNumber}</span></p>
+                    <button class="delete-btn">Smazat</button>
+                    <button class="update-btn">Upravit</button>
+                `;
 
-             // Najde nově vytvořené tlačítko a přidá mu posluchač
-             const deleteBtn = li.querySelector('.delete-btn');
-             deleteBtn.addEventListener('click', () => {
-                 if (confirm(`Opravdu chcete smazat kontakt ${contact.name}?`)) {
-                     // Zavoláme novou funkci deleteContact() s názvem kontaktu
-                     deleteContact(contact.name);
-                 }
-             });
+                // Přidání posluchače na tlačítko pro smazání
+                const deleteBtn = li.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', () => {
+                    if (confirm(`Opravdu chcete smazat kontakt ${contact.name}?`)) {
+                        deleteContact(contact.name);
+                    }
+                });
 
-             contactsList.appendChild(li);
-         });
+                // Přidání posluchače na tlačítko pro úpravu
+                const updateBtn = li.querySelector('.update-btn');
+                updateBtn.addEventListener('click', () => {
+                    if (updateContactModal) {
+                        const nameInput = updateContactModal.querySelector('#name');
+                        const emailInput = updateContactModal.querySelector('#email');
+                        const phoneInput = updateContactModal.querySelector('#phone');
+
+                        nameInput.value = contact.name;
+                        emailInput.value = contact.email;
+                        phoneInput.value = contact.phoneNumber;
+
+                        updateContactModal.style.display = 'block';
+                    } else {
+                        console.error('Chyba: Modální okno pro aktualizaci nebylo nalezeno.');
+                    }
+                });
+
+                contactsList.appendChild(li);
+            });
 
         } catch (error) {
             console.error('Došlo k chybě při načítání kontaktů:', error);
@@ -52,24 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Otevření modálního okna
-    addContactBtn.onclick = function() {
-        modal.style.display = 'flex';
-    }
+    // Otevření modálního okna "Přidat kontakt"
+    addContactBtn.addEventListener('click', () => {
+        addContactModal.style.display = 'flex';
+    });
 
-    // Zavření modálního okna kliknutím na křížek
-    closeBtn.onclick = function() {
-        modal.style.display = 'none';
-    }
+    // Zavření modálních oken kliknutím na křížek
+    addContactCloseBtn.addEventListener('click', () => {
+        addContactModal.style.display = 'none';
+    });
+    updateContactCloseBtn.addEventListener('click', () => {
+        updateContactModal.style.display = 'none';
+    });
 
-    // Zavření modálního okna kliknutím mimo něj
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+    // Zavření modálních oken kliknutím mimo ně
+    window.addEventListener('click', (event) => {
+        if (event.target === addContactModal) {
+            addContactModal.style.display = 'none';
         }
-    }
+        if (event.target === updateContactModal) {
+            updateContactModal.style.display = 'none';
+        }
+    });
 
-    // Odeslání formuláře
+    // Odeslání formuláře pro přidání kontaktu
     addContactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -91,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             addContactForm.reset();
-            modal.style.display = 'none';
+            addContactModal.style.display = 'none';
             fetchContacts();
 
         } catch (error) {
@@ -101,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function getDeleteUrl(contactName) {
-       return `http://localhost:8080/contact/deleteContact/${contactName}`;
+        return `http://localhost:8080/contact/deleteContact/${contactName}`;
     }
 
     // Funkce pro smazání kontaktu
@@ -114,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`Chyba při mazání: ${response.status}`);
             }
             console.log(`Kontakt ${contactName} byl úspěšně smazán.`);
-            // Po úspěšném smazání znovu načteme seznam kontaktů
             fetchContacts();
         } catch (error) {
             console.error('Došlo k chybě při mazání kontaktu:', error);
@@ -122,6 +150,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Spuštění načítání kontaktů při načtení stránky (tato část je klíčová pro zobrazení dat hned po načtení)
     fetchContacts();
 });

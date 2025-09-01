@@ -75,6 +75,23 @@ h1 {
     background-color: #c82333; /* Tmavší červená při najetí myší */
 }
 
+.update-btn {
+    position: absolute; /* Absolutní pozicování vzhledem k .contact-item */
+    bottom: 10px; /* 10px od spodního okraje */
+    right: 100px; /* 10px od pravého okraje */
+    background-color: #0000FF; /* Červená barva */
+    color: white; /* Bílý text */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.update-btn:hover {
+    background-color: #00008B; /* Tmavší červená při najetí myší */
+}
+
 /* Styly pro modální okno (formulář) */
 .modal {
     display: none;
